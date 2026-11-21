@@ -29,7 +29,7 @@ sudo ufw allow OpenSSH && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw en
 ## 2. The assistant
 
 ```bash
-git clone https://github.com/<you>/clinic-assistant.git && cd clinic-assistant
+git clone https://github.com/satishkumarnirujogi/Business_communication_tool.git && cd Business_communication_tool
 cp .env.example .env
 nano .env
 ```
@@ -105,7 +105,7 @@ With `DATA_SOURCE=postgres`, back up that database with your provider's tools or
 ## 5. Updates
 
 ```bash
-cd clinic-assistant
+cd Business_communication_tool
 git pull
 docker compose up -d --build
 docker image prune -f

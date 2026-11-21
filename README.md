@@ -35,7 +35,7 @@ Staff manage everything in an admin dashboard.
 You need [Docker](https://docs.docker.com/get-docker/) and an API key for an AI provider (or [Ollama](docs/ollama.md)).
 
 ```bash
-git clone https://github.com/<you>/clinic-assistant.git && cd clinic-assistant
+git clone https://github.com/satishkumarnirujogi/Business_communication_tool.git && cd Business_communication_tool
 cp .env.example .env        # then set LLM_PROVIDER, LLM_MODEL and LLM_API_KEY in .env
 docker compose up -d
 ```
