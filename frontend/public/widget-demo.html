@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Widget demo – a clinic website</title>
+  <style>
+    body { margin: 0; font: 16px/1.6 Georgia, serif; color: #1f2937; background: #fbfaf7; }
+    header { padding: 48px 24px; background: #e9f3f2; }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 24px 120px; }
+    h1 { margin: 0; font-size: 34px; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header><main style="padding:0"><h1>Riverside Family Clinic</h1><p>Your family doctors on River Road.</p></main></header>
+  <main>
+    <p>This page stands in for a clinic's own website. The chat button in the corner comes from one line of HTML:</p>
+    <p><code>&lt;script src="https://YOUR-ASSISTANT-HOST/widget.js" async data-label="Chat with us"&gt;&lt;/script&gt;</code></p>
+    <p>Options: <code>data-color</code>, <code>data-lang</code> (de or en), <code>data-label</code>, <code>data-position="left"</code>.</p>
+  </main>
+  <script src="/widget.js" async data-label="Chat with us" data-color="#0f9d94"></script>
+</body>
+</html>

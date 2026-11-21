@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an improvement for clinics or their patients
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation at the clinic or for the patient, not only the solution.
+      placeholder: "Our front desk gets many calls asking whether we accept a certain insurance…"
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Patient safety or privacy considerations
+      description: Could this give medical advice, expose personal data, or book something by mistake? How should it be prevented?
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to work on this myself

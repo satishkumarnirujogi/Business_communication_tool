@@ -1,0 +1,52 @@
+# Clinic assistant: backend (FastAPI), frontend (nginx with the web apps) and Chroma (vector store).
+#
+#   cp .env.example .env      # then set LLM_PROVIDER, LLM_MODEL and LLM_API_KEY
+#   docker compose up -d
+#   open http://localhost:8080 (patient chat) and http://localhost:8080/admin (setup wizard, then dashboard)
+#
+# Demo mode is on by default: an empty database is filled with a sample clinic and its documents.
+# Set DEMO_MODE=false in .env before using it for a real clinic.
+
+name: clinic-assistant
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: clinic-assistant-backend:0.6.0
+    restart: unless-stopped
+    environment:
+      DEMO_MODE: ${DEMO_MODE:-true}
+      CHROMA_HOST: chroma
+      CHROMA_PORT: "8000"
+    volumes:
+      - ./.env:/app/.env           # settings; the admin UI writes changes back here
+      - ./config:/app/config       # clinic.yaml and rules.yaml, editable on the host and in the admin UI
+      - clinic-data:/app/data      # SQLite database, uploads, logo, embedding model
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # reach Ollama on the host (docs/ollama.md), also on Linux
+    depends_on:
+      - chroma
+
+  frontend:
+    build: ./frontend
+    image: clinic-assistant-frontend:0.6.0
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  chroma:
+    image: chromadb/chroma:1.5.9     # keep in step with the chromadb client version the backend installs
+    restart: unless-stopped
+    environment:
+      ANONYMIZED_TELEMETRY: "FALSE"
+    volumes:
+      - chroma-data:/data
+
+volumes:
+  clinic-data:
+  chroma-data:

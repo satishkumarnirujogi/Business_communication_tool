@@ -1,0 +1,157 @@
+# Clinic business rules. Every agent action is validated against this file before it
+# touches the database. Edit and restart the server to apply.
+# Clinic name, phone and timezone live in clinic.yaml.
+
+# 24h local time in the clinic timezone (see clinic.yaml), [open, close]. null = closed all day.
+opening_hours:
+  monday:    ["09:00", "17:00"]
+  tuesday:   ["09:00", "17:00"]
+  wednesday: ["09:00", "17:00"]
+  thursday:  ["09:00", "17:00"]
+  friday:    ["09:00", "17:00"]
+  saturday:  ["09:00", "13:00"]
+  sunday:    null
+
+# Public holidays / closures (YYYY-MM-DD).
+closed_dates:
+  - "2026-12-25"
+  - "2026-12-26"
+  - "2027-01-01"
+
+booking:
+  slot_minutes: 15                # calendar grid; a 40-minute service books 3 consecutive cells
+  default_duration_minutes: 30    # length when the patient doesn't pick a service
+  min_lead_time_hours: 2          # can't book a slot starting sooner than this
+  max_days_ahead: 30              # can't book or search further out than this
+  max_search_span_days: 14        # one availability search covers at most this many days
+  max_active_appointments_per_patient: 3
+
+cancellation:
+  min_notice_hours: 48
+  policy_text: >-
+    Appointments can be cancelled free of charge up to 48 hours before the
+    start time. Within 48 hours, cancellations must be made by phone with the
+    front desk and a late-cancellation fee may apply.
+
+reschedule:
+  # Moving an appointment online needs at least this much notice (defaults to the cancellation notice).
+  min_notice_hours: 48
+
+escalation:
+  # Checked in order against every patient message (case-insensitive, whole words, English + German).
+  # action: block    -> emergency: the assistant does not answer, any booking in progress stops, the patient
+  #                     gets `message` only and an URGENT task is created for staff.
+  # action: handoff  -> a staff task is created; the assistant may still help with scheduling but must not
+  #                     give medical advice.
+  # `message` can be one text, or one text per language code.
+  categories:
+    crisis:
+      action: block
+      keywords:
+        - suicidal
+        - suicide
+        - kill myself
+        - end my life
+        - want to die
+        - suizid
+        - selbstmord
+        - umbringen
+        - nicht mehr leben
+        - sterben will
+      message:
+        en: >-
+          I'm really sorry you're going through this. Please call 112 now if you are in danger, or reach a crisis
+          line any time (in Germany: Telefonseelsorge 0800 111 0 111, free and anonymous). You don't have to
+          handle this alone. I've let our staff know so someone can reach out.
+        de: >-
+          Es tut mir sehr leid, dass es Ihnen so geht. Wenn Sie in Gefahr sind, rufen Sie bitte sofort die 112 an.
+          Rund um die Uhr erreichen Sie die Telefonseelsorge kostenlos und anonym unter 0800 111 0 111. Sie müssen
+          das nicht allein durchstehen. Ich habe unser Team informiert, damit sich jemand bei Ihnen meldet.
+    urgent:
+      action: block
+      keywords:
+        # English
+        - emergency
+        - chest pain
+        - can't breathe
+        - cannot breathe
+        - difficulty breathing
+        - short of breath
+        - unconscious
+        - passed out
+        - stroke
+        - heart attack
+        - seizure
+        - severe bleeding
+        - heavy bleeding
+        - bleeding heavily
+        - overdose
+        - allergic reaction
+        - anaphylaxis
+        # German
+        - notfall
+        - brustschmerzen
+        - schmerzen in der brust
+        - keine luft
+        - atemnot
+        - bewusstlos
+        - ohnmächtig
+        - schlaganfall
+        - herzinfarkt
+        - krampfanfall
+        - starke blutung
+        - blutet stark
+        - überdosis
+        - allergischer schock
+      message:
+        en: >-
+          This sounds like an emergency. Please call 112 now, or go to the nearest emergency
+          department. I've alerted our staff. I can't continue with bookings in this chat while this may be urgent.
+        de: >-
+          Das klingt nach einem Notfall. Bitte rufen Sie sofort die 112 an oder gehen Sie in die
+          nächste Notaufnahme. Ich habe unser Team informiert. Solange es dringend sein könnte, kann ich
+          hier keine Termine bearbeiten.
+    medical_question:
+      action: handoff
+      keywords:
+        # English
+        - diagnose
+        - diagnosis
+        - prescription
+        - prescribe
+        - medication
+        - medicine
+        - dosage
+        - dose
+        - side effect
+        - side effects
+        - symptom
+        - symptoms
+        - test results
+        - lab results
+        - is it normal
+        - should i take
+        - pregnant
+        # German
+        - diagnose
+        - medikament
+        - medikamente
+        - dosis
+        - dosierung
+        - nebenwirkung
+        - nebenwirkungen
+        - symptome
+        - befund
+        - laborwerte
+        - ist das normal
+        - soll ich nehmen
+        - schwanger
+      message:
+        en: >-
+          I can't give medical advice, so I've passed your question to our clinical team and a nurse
+          will follow up with you. The best next step is an appointment with one of our doctors; I'm
+          happy to find one for you.
+        de: >-
+          Ich darf keine medizinischen Ratschläge geben. Ich habe Ihre Frage an unser medizinisches
+          Team weitergeleitet, eine Pflegekraft meldet sich bei Ihnen. Am besten besprechen Sie das in
+          einem Termin mit einer Ärztin oder einem Arzt. Ich suche Ihnen gern einen Termin heraus.

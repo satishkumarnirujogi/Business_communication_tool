@@ -1,0 +1,24 @@
+# Clinic profile. Safe to edit without touching code; restart the server to apply.
+# Any field can be overridden by an environment variable prefixed with CLINIC_
+# (e.g. CLINIC_NAME, CLINIC_PHONE; nested fields use a double underscore: CLINIC_BRANDING__PRIMARY_COLOR).
+# Secrets (API keys, database passwords) never go here: they belong in .env.
+
+name: Riverside Family Clinic
+phone: "+1-555-0100"
+email: hello@riverside-clinic.example
+address: 12 River Road, Springfield
+website: https://riverside-clinic.example
+
+# IANA timezone (e.g. Europe/Berlin). Opening hours in rules.yaml are read in this zone.
+# Slots are regenerated automatically when the server restarts.
+timezone: UTC
+
+# Languages the assistant replies in (detected per message; supported: en, de). The first one is the default.
+languages: [en, de]
+
+# Currency for prices in the service list.
+currency: EUR
+
+branding:
+  logo_url: ""            # URL or /static path; empty = text-only header
+  primary_color: "#0f9d94" # soft teal

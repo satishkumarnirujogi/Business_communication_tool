@@ -1,0 +1,18 @@
+# Never send secrets or local data into an image.
+.env
+.env.*
+!.env.example
+data/
+.git/
+.github/
+.venv/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+backend/tests/
+backend/*.egg-info/
+frontend/
+docs/
+*.md

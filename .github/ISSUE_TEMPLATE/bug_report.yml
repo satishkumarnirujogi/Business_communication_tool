@@ -1,0 +1,53 @@
+name: Bug report
+description: Something doesn't work as described
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Never include real patient data, API keys or passwords**, not even in logs or screenshots.
+        Reproduce with the demo clinic (`DEMO_MODE=true`) if you can.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the chat
+        2. Type "…"
+        3. …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Patient chat / widget
+        - Admin dashboard
+        - Booking, rules or calendar
+        - Knowledge base
+        - WhatsApp / email / reminders
+        - Data source (SQLite, Postgres, Excel, Google Sheets)
+        - AI model / provider
+        - Docker / installation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: setup
+    attributes:
+      label: Setup
+      placeholder: "Docker on Ubuntu 24.04 / version 0.6.0 / DATA_SOURCE=sqlite / LLM: openrouter + claude-haiku"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message or server log
+      description: Remove anything personal first. Emails and phone numbers are masked in the server log, but check anyway.
+      render: text

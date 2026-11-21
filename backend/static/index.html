@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic Assistant</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1d2430; --muted:#6b7380; --accent:#1f6feb; --me:#e8f0fe; --warn:#fff4e5; --warnb:#f0a020; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:720px; margin:0 auto; height:100vh; display:flex; flex-direction:column; padding:16px; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:13px; margin-bottom:12px; }
+  #log { flex:1; overflow-y:auto; background:var(--card); border:1px solid #e3e6ea; border-radius:10px; padding:12px; }
+  .msg { margin:8px 0; padding:8px 12px; border-radius:10px; max-width:85%; white-space:pre-wrap; }
+  .bot { background:#f1f3f5; }
+  .me { background:var(--me); margin-left:auto; }
+  .esc { background:var(--warn); border-left:4px solid var(--warnb); }
+  .sources { margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; }
+  .tag { font-size:12px; color:var(--muted); background:#fff; border:1px solid #dde1e6; border-radius:999px; padding:1px 8px; }
+  form { display:flex; gap:8px; margin-top:12px; }
+  input { flex:1; padding:10px 12px; border:1px solid #cfd4da; border-radius:8px; font:inherit; }
+  button { padding:10px 16px; border:0; border-radius:8px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:default; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Clinic Assistant</h1>
+  <div class="sub">Book, look up or cancel appointments. Not for emergencies — call 911.</div>
+  <div id="log" aria-live="polite"><div class="msg bot">Hi! I can help you find a slot, book, look up or cancel an appointment, and answer questions about the clinic. What would you like to do?</div></div>
+  <form id="f">
+    <input id="q" autocomplete="off" placeholder="e.g. Any GP slots next Tuesday?" maxlength="2000" required>
+    <button id="send">Send</button>
+  </form>
+</main>
+<script>
+  const log = document.getElementById('log'), f = document.getElementById('f'),
+        q = document.getElementById('q'), send = document.getElementById('send');
+  let sessionId = null;
+  fetch('/api/clinic').then(r => r.json()).then(c => {
+    document.getElementById('title').textContent = c.name + ' — Assistant';
+    document.title = c.name + ' Assistant';
+  }).catch(() => {});
+  function add(text, cls) {
+    const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text;
+    log.appendChild(d); log.scrollTop = log.scrollHeight; return d;
+  }
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = q.value.trim(); if (!text) return;
+    add(text, 'me'); q.value = ''; send.disabled = true;
+    const typing = add('…', 'bot');
+    try {
+      const r = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ message: text, session_id: sessionId }) });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      sessionId = data.session_id;
+      typing.textContent = data.reply;
+      if (data.escalation) typing.className = 'msg bot esc';
+      if (data.sources && data.sources.length) {
+        const tags = document.createElement('div'); tags.className = 'sources';
+        for (const s of data.sources) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = s; tags.appendChild(t); }
+        typing.appendChild(tags);
+      }
+    } catch (err) {
+      typing.textContent = 'Sorry, something went wrong. Please try again.';
+    } finally { send.disabled = false; q.focus(); }
+  });
+</script>
+</body>
+</html>

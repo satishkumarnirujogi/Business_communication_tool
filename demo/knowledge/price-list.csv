@@ -1,0 +1,12 @@
+Service,Duration (minutes),Price (EUR),Notes
+General consultation,20,45,Standard visit for a new or ongoing concern
+Extended consultation,40,80,For several concerns or a complex history
+Health check-up,45,90,Includes blood pressure and basic blood tests
+Vaccination,15,30,Vaccine cost charged separately; flu vaccine 18 EUR
+Child check-up,30,60,Covered by statutory insurance for children under 18
+Skin check,30,75,Full-body mole check by a dermatologist
+Acne consultation,30,70,Assessment and treatment plan
+Gynecological exam,30,85,Routine examination
+Prenatal visit,30,Covered by insurance,Self-paying patients: price on request
+Joint pain assessment,30,70,Joint back or sports-related pain
+Medical certificate,10,15,Sick note for employers or schools
